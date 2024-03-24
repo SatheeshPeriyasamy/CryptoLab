@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Miller-Rabin Primality Test</title>
+  <style>
+        body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f0f0f0;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 200;
+      background-color: #D2B48C;
+      box-shadow: 0 1px 4px hsl(0 4% 14% /10%);
+    }
+    .container-1 {
+      max-width: 1068px;
+      margin: auto;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #FFF; /* White color for Crypto */
+      text-decoration: none;
+      padding: 10px;
+      margin-left: -400px;
+    }
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #1a1e21;
+      margin: 0;
+    }
+    .back-button {
+      padding: 8px 14px;
+      text-transform: uppercase;
+      font-weight: 500;
+      border-radius: 4px;
+      background-color: #555555;
+      color: #fff;
+      text-decoration: none;
+      transition: background-color 0.3s;
+      margin-right: -400px; 
+    }
+    .back-button:hover {
+      background: hsl(24, 98%, 58%);
+    }
+    button {
+      display: block;
+      width: 50%;
+      margin-bottom: 10px;
+      margin-left: 70px;
+    }
+    #result {
+      margin-top: 10px;
+    }
+    /* Centering and box styles */
+   /* body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f0f0f0;
+    }*/
+
+    .container {
+      background-color: #D2B48C;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      width: 300px;
+      text-align: center;
+    }
+
+    label, input {
+      display: block;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+    /*button{
+        display: block;
+      width: 50%;
+      margin-bottom: 10px;
+      margin-left:70px;
+    }
+    #result {
+      margin-top: 10px;
+    }*/
+  </style>
+</head>
+<body>
+    <header>
+        <div class="container-1">
+            <a href="#" class="logo">Crypto<span>Labs!</span></a>
+            <h1>Miller Rabin Primality Test</h1>
+            <a href="index.html" class="back-button">Back</a>
+        </div>
+    </header>
+  <div class="container">
+    <h3>Enter a number to check if it's prime:</h3>
+    <input type="number" id="numberInput">
+    <br>
+    <button onclick="checkPrimality()">Check Primality</button>
+    <p id="result"></p>
+  </div>
+
+  <script>
+    function isPrime(n, k) {
+  if (n <= 1 || n == 4) return false;
+  if (n <= 3) return true;
+
+  while (k > 0) {
+    let a = 2 + Math.floor(Math.random() * (n - 4));
+    if (gcd(n, a) != 1) return false;
+
+    if (!millerRabinTest(n, a)) return false;
+
+    k--;
+  }
+  return true;
+}
+
+function millerRabinTest(n, a) {
+  let d = n - 1;
+  while (d % 2 === 0) {
+    if (modExp(a, d, n) === 1 || modExp(a, d, n) === n - 1)
+      return true;
+    d /= 2;
+  }
+  return false;
+}
+
+function modExp(x, y, p) {
+  let res = 1;
+  x = x % p;
+
+  while (y > 0) {
+    if (y % 2 === 1)
+      res = (res * x) % p;
+    y = Math.floor(y / 2);
+    x = (x * x) % p;
+  }
+  return res;
+}
+
+function gcd(a, b) {
+  if (b === 0)
+    return a;
+  return gcd(b, a % b);
+}
+
+function checkPrimality() {
+  const numberInput = document.getElementById("numberInput");
+  const resultElement = document.getElementById("result");
+  const number = parseInt(numberInput.value);
+
+  if (isNaN(number)) {
+    resultElement.textContent = "Please enter a valid number!";
+    return;
+  }
+
+  const k = 5; // Number of iterations
+  const isPrimeResult = isPrime(number, k);
+
+  if (isPrimeResult) {
+    resultElement.textContent = `${number} is likely prime.`;
+  } else {
+    resultElement.textContent = `${number} is composite.`;
+  }
+}
+
+  </script>
+</body>
+</html>

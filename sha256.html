@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHA-256 Generator</title>
+    <script>
+        function generateSHA256() {
+            var input = document.getElementById("inputText").value;
+            var hash = sha256(input);
+            document.getElementById("outputHash").innerText = hash;
+        }
+    </script>
+</head>
+<body>
+    <h1>SHA-256 Generator</h1>
+    <label for="inputText">Enter text:</label><br>
+    <input type="text" id="inputText"><br>
+    <button onclick="generateSHA256()">Generate SHA-256 Hash</button><br>
+    <label for="outputHash">SHA-256 Hash:</label><br>
+    <textarea id="outputHash" rows="4" cols="50" readonly></textarea>
+</body>
+</html>

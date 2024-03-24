@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vigenere and Vernam Cipher</title>
+    <style>
+       body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+  }
+  header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 200;
+    background-color: #D2B48C;
+    box-shadow: 0 1px 4px hsl(0 4% 14% /10%);
+  }
+  .container {
+    max-width: 1068px;
+    margin: auto;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .logo {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #FFF; /* White color for Crypto */
+            text-decoration: none;
+            padding: 10px;
+            margin-left: -400px;
+        }
+  h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1a1e21;
+    margin: 0;
+  }
+  .back-button {
+    padding: 8px 14px;
+    text-transform: uppercase;
+    font-weight: 500;
+    border-radius: 4px;
+    background-color: #555555;
+    color: #fff;
+    text-decoration: none;
+    transition: background-color 0.3s;
+    margin-right: -400px; 
+  }
+  .back-button:hover {
+    background: hsl(24, 98%, 58%);
+  }
+  main {
+    padding: 20px;
+    font-size: 1rem;
+    line-height: 1.5;
+    margin-top: 90px; /* Adjust margin to account for the fixed header */
+  }
+  .logo span {
+        color: #555555; /* Color for Labs! */
+        margin-right: -100px;
+    }
+  .input-container {
+            flex: 1;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+            margin-right: 10px; /* Added margin for spacing between containers */
+        }
+        textarea, input[type="text"] {
+            width: calc(100% - 20px);
+            margin-bottom: 10px;
+            font-size: 18px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+        button {
+            padding: 8px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 3px;
+        }
+        h1, h2, h3, label {
+            font-weight: normal;
+        }
+        h1, h2, h3 {
+            margin: 0;
+            padding: 10px 0;
+        }
+        .h11{
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1a1e21;
+    margin: 90px 0 0; /* Adjust margin to start after the fixed header */
+    font-family: 'Poppins', sans-serif;
+  }
+  .h22{
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1a1e21;
+    font-family: 'Poppins', sans-serif;
+  }
+  header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1a1e21;
+            margin: 0;
+            font-family: 'Poppins', sans-serif; /* Applying Poppins and sans-serif fonts */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="#" class="logo">Crypto<span>Labs!</span></a>
+            <h1>Vignere & Vernam</h1>
+            <a href="index.html" class="back-button">Back</a>
+        </div>
+    </header>
+    <center><h1 class="h11">VIGNERE CIPHER</h1></center>
+    <div class="container">
+        <div class="input-container">
+            <h2>Encrypt</h2>
+            <textarea id="plainTextEncrypt" placeholder="Enter plain text" pattern="[A-Za-z]+" title="Please enter alphabetic characters only"></textarea>
+            <input type="text" id="keyEncrypt" placeholder="Enter key" pattern="[A-Za-z]+" title="Please enter alphabetic characters only">
+            <button id="encryptButton">Encrypt</button>
+            <h3>Cipher Text</h3>
+            <textarea id="cipherTextEncrypt" readonly></textarea>
+        </div>
+        <div class="input-container">
+            <h2>Decrypt</h2>
+            <textarea id="cipherTextDecrypt" placeholder="Enter cipher text" pattern="[A-Za-z]+" title="Please enter alphabetic characters only"></textarea>
+            <input type="text" id="keyDecrypt" placeholder="Enter key" pattern="[A-Za-z]+" title="Please enter alphabetic characters only">
+            <button id="decryptButton">Decrypt</button>
+            <h3>Plain Text</h3>
+            <textarea id="plainTextDecrypt" readonly></textarea>
+        </div>
+    </div>
+    <center><h1 class="h22">VERNAM CIPHER</h1></center>
+    <div class="container">
+        <div class="input-container">
+            <h2>Encrypt</h2>
+            <textarea type="text" id="plain" placeholder="Enter plain text"></textarea>
+            <button class="btn" onclick="generateKey()">Generate Key</button>
+            <label>Seed value of Key:</label>
+            <textarea disabled id="key" style="background-color: white; height: 60px;"></textarea>
+            <button class="btn" onclick="encryption()">Encrypt</button>
+            <br>
+            <h3>Encrypted Text:</h3>
+            <textarea disabled id="encryptedText" style="background-color: white;"></textarea>
+        </div>
+        <div class="input-container">
+            <h2>Decrypt</h2>
+            <textarea type="text" id="cipher" placeholder="Enter encrypted text"></textarea>
+            <br>
+            <label>Enter seed key value:</label>
+            <textarea id="decryptKey" placeholder="Enter seed key" style="margin-top:9px ; height: 60px;"></textarea>
+            <button class="btn" onclick="decryption()">Decrypt</button>
+            <br>
+            <h3>Decrypted Text:</h3>
+            <textarea disabled id="decryptedText" style="background-color: white;"></textarea>
+        </div>
+    </div>
+    <script>
+        //VIGNERE CIPHER FUNCTIONS:
+
+function vigenereEncrypt(plainText, key) {
+    plainText = plainText.toUpperCase();
+    key = key.toUpperCase();
+
+    let encryptedText = '';
+    let keyIndex = 0;
+
+    for (let i = 0; i < plainText.length; i++) {
+        const plainCharCode = plainText.charCodeAt(i);
+        if (plainCharCode >= 65 && plainCharCode <= 90) {
+            const keyCharCode = key.charCodeAt(keyIndex % key.length);
+            const encryptedCharCode = ((plainCharCode + keyCharCode) % 26) + 65;
+            encryptedText += String.fromCharCode(encryptedCharCode);
+            keyIndex++;
+        } else {
+            encryptedText += plainText[i];
+        }
+    }
+
+    return encryptedText;
+}
+
+function vigenereDecrypt(cipherText, key) {
+    cipherText = cipherText.toUpperCase();
+    key = key.toUpperCase();
+
+    let decryptedText = '';
+    let keyIndex = 0;
+
+    for (let i = 0; i < cipherText.length; i++) {
+        const cipherCharCode = cipherText.charCodeAt(i);
+        if (cipherCharCode >= 65 && cipherCharCode <= 90) {
+            const keyCharCode = key.charCodeAt(keyIndex % key.length);
+            const decryptedCharCode = ((cipherCharCode - keyCharCode + 26) % 26) + 65;
+            decryptedText += String.fromCharCode(decryptedCharCode);
+            keyIndex++;
+        } else {
+            decryptedText += cipherText[i];
+        }
+    }
+
+    return decryptedText;
+}
+
+document.getElementById("encryptButton").addEventListener("click", function () {
+    const plainText = document.getElementById("plainTextEncrypt").value;
+    const key = document.getElementById("keyEncrypt").value;
+
+    if (!isValidInput(key)) {
+        alert("Key should contain only alphabetic characters.");
+        return;
+    }
+
+    const cipherText = vigenereEncrypt(plainText, key);
+    document.getElementById("cipherTextEncrypt").value = cipherText;
+});
+
+document.getElementById("decryptButton").addEventListener("click", function () {
+    const cipherText = document.getElementById("cipherTextDecrypt").value;
+    const key = document.getElementById("keyDecrypt").value;
+
+    if (!isValidInput(key)) {
+        alert("Key should contain only alphabetic characters.");
+        return;
+    }
+
+    const plainText = vigenereDecrypt(cipherText, key);
+    document.getElementById("plainTextDecrypt").value = plainText;
+});
+
+function isValidInput(input) {
+    return /^[A-Za-z]+$/.test(input);
+}
+
+//VERNAM CIPHER FUNCTIONS:
+
+function generateKey() {
+    const inputText = document.getElementById("plain").value;
+    const seed = Math.floor(Math.random() * 100); // Generate a random seed
+    if(document.getElementById("plain").value=="")
+    {
+        alert("Enter text to encrypt!");
+        return;
+    }
+    document.getElementById("key").textContent = "Seed: " + seed;
+}
+
+function encryption() {
+    const inputText = document.getElementById("plain").value;
+    const keySeed = parseInt(document.getElementById("key").textContent.split(" ")[1]);
+    const key = generateSeededKey(inputText.length, keySeed);
+    if(document.getElementById("plain").value=="")
+    {
+        alert("Enter text to encrypt!");
+        return;
+    }
+    if(document.getElementById("key").value=="")
+    {
+        alert("Enter text to encrypt!");
+        return;
+    }
+    const encryptedText = enc(inputText, key);
+    document.getElementById("encryptedText").value = encryptedText;
+}
+
+function decryption() {
+    if(document.getElementById("cipher").value=="" )
+    {
+        alert("Enter text to decrypt!");
+        return;
+    }
+    if(document.getElementById("decryptKey").value=="" )
+    {
+        alert("Enter seed value of key to decrypt!");
+        return;
+    }
+    
+    const encryptedText = document.getElementById("cipher").value;
+    const keySeed = parseInt(document.getElementById("decryptKey").value);
+    const key = generateSeededKey(encryptedText.length, keySeed);
+
+    const decryptedText = dec(encryptedText, key);
+    document.getElementById("decryptedText").textContent = decryptedText;
+}
+
+function generateSeededKey(length, seed) {
+    let key = "";
+    for (let i = 0; i < length; i++) {
+        const r = (seed + i) % 26;
+        key += String.fromCharCode(r);
+    }
+    return key;
+}
+
+function enc(plaintext, key) {
+    let encryptedText = "";
+
+    for (let i = 0; i < plaintext.length; i++) {
+        const p = plaintext.charCodeAt(i) ;
+        const k = key.charCodeAt(i) ;
+        const c = (p ^ k) ;// (p + k) % 256
+        encryptedText += String.fromCharCode(c);
+    }
+
+    return encryptedText;
+}
+
+function dec(encryptedText, key) {
+    let decryptedText = "";
+
+    for (let i = 0; i < encryptedText.length; i++) {
+        const c = encryptedText.charCodeAt(i);
+        const k = key.charCodeAt(i) ;
+        const p = (c^k)  ; // (c - k + 256) % 256
+        decryptedText += String.fromCharCode(p);
+    }
+
+    return decryptedText;
+}
+
+    </script>
+</body>
+</html>

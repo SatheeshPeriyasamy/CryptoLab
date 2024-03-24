@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+  document.addEventListener("DOMContentLoaded", function () {
+  const inputText = document.getElementById("input-text");
+  const generateButton = document.getElementById("generate-button");
+  const hashOutput = document.getElementById("hash-output");
+
+  generateButton.addEventListener("click", function () {
+    const textToHash = inputText.value;
+
+    if (textToHash.trim() === "") {
+      hashOutput.textContent = "Please enter text to hash.";
+      return;
+    }
+
+    const encoder = new TextEncoder();
+    const data = encoder.encode(textToHash);
+
+    crypto.subtle.digest("SHA-256", data).then(function (hashBuffer) {
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const hashHex = hashArray.map(byte => byte.toString(16).padStart(2, "0")).join("");
+      hashOutput.textContent = `SHA-256 Hash: ${hashHex}`;
+    });
+  });
+});
+
+  </script>
+  <style>
+    body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+  }
+  header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 200;
+    background-color: #D2B48C;
+    box-shadow: 0 1px 4px hsl(0 4% 14% /10%);
+  }
+  .container {
+    max-width: 1068px;
+    margin: auto;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .logo {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #FFF; /* White color for Crypto */
+            text-decoration: none;
+            padding: 10px;
+            margin-left: -400px;
+        }
+  h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1a1e21;
+    margin: 0;
+  }
+  .back-button {
+    padding: 8px 14px;
+    text-transform: uppercase;
+    font-weight: 500;
+    border-radius: 4px;
+    background-color: #555555;
+    color: #fff;
+    text-decoration: none;
+    transition: background-color 0.3s;
+    margin-right: -400px; 
+  }
+  .back-button:hover {
+    background: hsl(24, 98%, 58%);
+  }
+  main {
+    padding: 20px;
+    font-size: 1rem;
+    line-height: 1.5;
+    margin-top: 90px; /* Adjust margin to account for the fixed header */
+  }
+
+h1 {
+  text-align: center;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+input {
+  width: 50%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+
+button {
+  width: 10%;
+  padding: 10px;
+  background-color: #007bff;
+  color: #ffffff;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+#hash-output {
+  margin-top: 10px;
+  padding: 10px;
+}
+.container-1{
+  margin-top: 200px;
+}
+.logo span {
+        color: #555555; /* Color for Labs! */
+        margin-right: -100px;
+    }
+    .output{
+      font-weight: bold;
+    }
+  </style>
+  <title>SHA Hash Generator</title>
+</head>
+<body>
+  <header>
+    <div class="container">
+        <a href="#" class="logo">Crypto<span>Labs!</span></a>
+        <h1>SHA Hash Generator</h1>
+        <a href="index.html" class="back-button">Back</a>
+    </div>
+</header>
+  <div class="container-1">
+    <center>
+    <h1>Enter Text:</h1>
+    <input type="text" id="input-text" placeholder="Enter text to hash">
+    <br><br>
+    <button id="generate-button">Generate SHA Hash</button>
+    <div class="output" id="hash-output"></div>
+    </center>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>

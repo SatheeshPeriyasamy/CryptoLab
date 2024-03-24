@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RSA Encryption and Decryption</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+        body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+  }
+  header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 200;
+    background-color: #D2B48C;
+    box-shadow: 0 1px 4px hsl(0 4% 14% /10%);
+  }
+  .container1 {
+    max-width: 1068px;
+    margin: auto;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .logo {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #FFF; /* White color for Crypto */
+            text-decoration: none;
+            padding: 10px;
+            margin-left: -400px;
+        }
+  .h11{
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1a1e21;
+    margin: 0;
+  }
+  .back-button {
+    padding: 8px 14px;
+    text-transform: uppercase;
+    font-weight: 500;
+    border-radius: 4px;
+    background-color: #555555;
+    color: #fff;
+    text-decoration: none;
+    transition: background-color 0.3s;
+    margin-right: -400px; 
+  }
+  .back-button:hover {
+    background: hsl(24, 98%, 58%);
+  }
+  main {
+    padding: 20px;
+    font-size: 1rem;
+    line-height: 1.5;
+    margin-top: 90px; /* Adjust margin to account for the fixed header */
+  }
+  .logo span {
+        color: #555555; /* Color for Labs! */
+        margin-right: -100px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container1">
+        <a href="#" class="logo">Crypto<span>Labs!</span></a>
+        <h1 class="h11">RSA</h1>
+        <a href="C:\xampp\htdocs\cryptolab\CryptoLabs frontend\index.html" class="back-button">Back</a>
+    </div>
+</header>
+  <div class="a_container">
+  <div class="box">
+    <h1>RSA Encryption and Decryption</h1>
+    <h2>Key Length:</h2>
+    <input type="radio" id="key512" name="keyLength" value="4">
+    <label for="key512">4 bits</label>
+    <input type="radio" id="key1024" name="keyLength" value="8">
+    <label for="key1024">8 bits</label>
+    <input type="radio" id="key2048" name="keyLength" value="16">
+    <label for="key2048">16 bits</label>
+    
+    <h2>Generate Parameters:</h2>
+    <label for="p">P:</label>
+    <input type="text" id="p" name="p" placeholder="P Value"><br>
+    <label for="q">Q:</label>
+    <input type="text" id="q" name="q" placeholder="Q Value"><br>
+    <label for="p">N:</label>
+    <input type="text" id="n" name="n" placeholder="N Value"><br>
+    <label for="q">φ(n):</label>
+    <input type="text" id="φ(n)" name="φ(n)" placeholder="φ(n)">
+    <button onclick="calculate()"><ion-icon name="refresh"></ion-icon> Auto Generate</button>
+  
+    <h2>Input E:</h2>
+    <label for="e">E:</label>
+    <input type="text" id="e" name="e" placeholder="Enter E Value">
+    <button onclick="checkE()"><ion-icon name="checkmark-circle"></ion-icon> Check E</button>
+    <div id="result"></div>
+
+    <h2>Private Key:</h2>
+    <label for="d">D:</label>
+    <input type="text" id="d" name="d" placeholder="Private Key">
+    <button onclick="calculateD()"><ion-icon name="refresh"></ion-icon> Generate D</button>
+  </div>
+  
+  <div class="encrypt-box">
+    <h1>RSA Encryption</h1>
+    <hr>
+    <div class="flex-container">
+      <h2>Plain Text:</h2>
+      <textarea id="plainText_e" rows="10" cols="50"></textarea>
+      <div class="btn_container">
+      <button onclick="uploadPlainText1()" id="upload"><ion-icon name="cloud-upload-sharp"></ion-icon>Upload</button>
+      <button onclick="encrypt()" id="encrypt"><ion-icon name="arrow-forward-circle-outline"></ion-icon>Encrypt</button>
+    </div>
+    </div>
+    
+    <div class="flex-container">
+      <h2>Cipher Text:</h2>
+      <textarea id="encryptedText" rows="10" cols="50" readonly></textarea>
+      <div class="btn_container1">
+        <button id="download" onclick="downloadProcessedText()"><ion-icon name="arrow-down-outline"></ion-icon>Download</button>
+      <button id="copy" onclick="copy1()"><ion-icon name="copy"></ion-icon> Copy</button>
+      </div>
+      
+  </div>
+  </div>
+  <div class="decrypt-box">
+    <h1>RSA Decryption</h1>
+    <hr>
+    <div class="flex-container">
+      <h2>Cipher Text:</h2>
+      <textarea id="plainText_d" rows="10" cols="50"></textarea>
+      <div class="btn_container">
+      <button onclick="uploadPlainText2()" id="upload"><ion-icon name="cloud-upload-sharp"></ion-icon>Upload</button>
+      <button onclick="decrypt()" id="decrypt"><ion-icon name="arrow-back-circle-outline"></ion-icon>Decrypt</button>
+    </div>
+    </div>
+    
+    <div class="flex-container">
+      <h2>Plain Text:</h2>
+      <textarea id="decryptedText" rows="10" cols="50" readonly></textarea>
+      <div class="btn_container1">
+        <button id="download" onclick="downloadProcessedText()"><ion-icon name="arrow-down-outline"></ion-icon>Download</button>
+         <button id="copy" onclick="copy2()"><ion-icon name="copy"></ion-icon> Copy</button>
+      </div>
+  </div>
+  </div>
+</div>
+<script src="script.js"></script>
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+<footer>
+  <div class="footer-content">
+  </div>
+</footer>
+</body>
+</html>

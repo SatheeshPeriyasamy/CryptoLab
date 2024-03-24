@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Elliptic Curve Cryptography</title>
+</head>
+<style>
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+}
+
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 200;
+    background-color: #D2B48C;
+    box-shadow: 0 1px 4px hsl(0 4% 14% /10%);
+}
+
+.container {
+    max-width: 1068px;
+    margin: auto;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #FFF;
+    text-decoration: none;
+    padding: 10px;
+    margin-left: -400px;
+    font-family: 'Poppins', sans-serif;
+}
+.logo span {
+        color: #555555; /* Color for Labs! */
+    }
+
+h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1a1e21;
+    margin: 0;
+}
+
+.back-button {
+    padding: 8px 14px;
+    text-transform: uppercase;
+    font-weight: 500;
+    border-radius: 4px;
+    background-color: #555555;
+    color: #fff;
+    text-decoration: none;
+    transition: background-color 0.3s;
+    margin-right: -400px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.back-button:hover {
+    background: hsl(24, 98%, 58%);
+}
+
+main {
+    padding: 20px;
+    font-size: 1rem;
+    line-height: 1.5;
+    margin-top: 90px;
+}
+
+.left-side,
+.middle-side,
+.right-side {
+    flex: 1;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    min-height: 500px; /* Fixed height for all three side containers */
+}
+
+.left-side {
+    margin-top: 160px; /* Adjusted margin-top value */
+}
+
+.middle-side {
+    margin: 100px; 
+}
+
+.right-side {
+    margin-top: 160px; /* Adjusted margin-top value */
+}
+    label {
+        display: block;
+        margin-bottom: 5px;
+        color: #555;
+    }
+
+    input[type="text"] {
+        width: 50%; 
+        padding: 8px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+    #privateKey {
+        font-weight: bold;
+        margin-top: 10px;
+    }
+
+    #affinePointsOutput {
+        margin-top: 10px;
+        color: #666;
+    }
+
+    #encryptedResult {
+        font-weight: bold;
+        margin-top: 10px;
+    }
+</style>
+<body>
+    <center>
+        <header>
+            <div class="container">
+                <a href="#" class="logo">Crypto<span>Labs!</span></a>
+                <h1>Elliptic Curve Cryptography</h1>
+                <a href="index.html" class="back-button">Back</a>
+            </div>
+        </header>
+        <div class="container">
+            <div class="left-side">
+                <h2>Elliptic Curve Parameters</h2>
+                <label for="a">Enter value for 'a':</label>
+                <input type="text" id="a" /><br>
+                <label for="b">Enter value for 'b':</label>
+                <input type="text" id="b" /><br>
+                <label for="prime">Enter a prime number (p):</label>
+                <input type="text" id="prime" /><br>
+
+                <label for="privateKeyInput">Enter Private Key:</label>
+                <input type="text" id="privateKeyInput" />
+            </div>
+            <div class="middle-side">
+                <h2>Affine Points on the Curve</h2>
+                <p id="affinePointsOutput"></p>
+                <button onclick="displayAffinePoints()">Display Affine Points</button>
+                <br><br>
+                <label for="globalAffinePoint">Enter Global Affine Point (x, y):</label>
+                <input type="text" id="globalAffinePoint" /><br>
+
+                <p id="publicKeyOutput"></p> <!-- Public Key Output -->
+                <button onclick="generatePublicKey()">Generate Public Key</button>
+            </div>
+            <div class="right-side">
+                <h2>Encryption</h2>
+
+                <label for="plaintextPoint">Enter plaintext point (x, y):</label>
+                <input type="text" id="plaintextPoint" /><br>
+                <label for="randomInteger">Enter random integer 'k':</label>
+                <input type="text" id="randomInteger" /><br>
+                <button onclick="encrypt()">Encrypt</button>
+
+                <h4>Encryption Result</h4>
+                <p id="c1Result"></p>
+                <p id="c2Result"></p>
+            </div>
+        </div>
+
+        <script>
+            let affinePoints = []; // Declare an array to store affine points
+
+        function displayAffinePoints() {
+            // Get the values of 'a', 'b', and 'prime' from the input fields
+            const a = parseFloat(document.getElementById("a").value);
+            const b = parseFloat(document.getElementById("b").value);
+            const prime = parseFloat(document.getElementById("prime").value);
+
+            // Initialize the array to store the affine points
+            affinePoints = [];
+
+            // Iterate through possible 'x' values
+            for (let x = 0; x < prime; x++) {
+                // Calculate the right-hand side of the equation: (x^3 + ax + b) % p
+                const rhs = (Math.pow(x, 3) + a * x + b) % prime;
+
+                // Calculate 'y' using modular square root if rhs is a quadratic residue (has a square root)
+                const ySquareRoot = modularSquareRoot(rhs, prime);
+                if (ySquareRoot !== null) {
+                    // Add the affine point (x, y) to the array
+                    const y = ySquareRoot;
+                    affinePoints.push({ x, y });
+                }
+            }
+
+            // Display the affine points in the HTML element with id 'affinePointsOutput'
+            const affinePointsOutput = document.getElementById("affinePointsOutput");
+            affinePointsOutput.textContent = "Affine Points on the Curve:";
+            for (const point of affinePoints) {
+                const pointElement = document.createElement("p");
+                pointElement.textContent = `(${point.x}, ${point.y})`;
+                affinePointsOutput.appendChild(pointElement);
+            }
+        }
+
+        // Function to calculate the modular square root of 'a' modulo 'p'
+        function modularSquareRoot(a, p) {
+            for (let x = 0; x < p; x++) {
+                if ((x * x) % p === a) {
+                    return x;
+                }
+            }
+            return null;
+        }
+
+        // Function to perform point multiplication
+        function pointMultiplication(k, point, a, p) {
+            let result = { x: Infinity, y: Infinity };
+
+            for (let i = 0; i < k; i++) {
+                result = pointAddition(result, point, a, p);
+            }
+
+            return result;
+        }
+
+        // Function to perform point addition
+        function pointAddition(point1, point2, a, p) {
+            if (point1.x === Infinity) {
+                return point2;
+            }
+            if (point2.x === Infinity) {
+                return point1;
+            }
+
+            let slope;
+            if (point1.x === point2.x && point1.y === point2.y) {
+                slope = ((3 * point1.x * point1.x + a) * modInverse(2 * point1.y, p)) % p;
+            } else {
+                slope = ((point2.y - point1.y) * modInverse(point2.x - point1.x, p)) % p;
+            }
+
+            let x3 = ((slope * slope) - point1.x - point2.x) % p;
+            if(x3<0){
+            x3=x3+p;
+            }
+            let y3 = (slope * (point1.x - x3) - point1.y) % p;
+            if(y3<0){
+            y3=y3+p;
+            }
+
+            return { x: x3, y: y3 };
+        }
+
+        // Function to calculate the modular inverse
+        function modInverse(a, m) {
+            for (let x = 1; x < m; x++) {
+                if ((a * x) % m === 1) {
+                    return x;
+                }
+            }
+            return null; // No modular inverse found
+        }
+
+        // Function to generate the public key using the user-input global affine point
+        function generatePublicKey() {
+            // Get the values of 'a', 'b', 'prime', and 'privateKey' from the input fields
+            const a = parseFloat(document.getElementById("a").value);
+            const b = parseFloat(document.getElementById("b").value);
+            const prime = parseFloat(document.getElementById("prime").value);
+            const privateKey = parseFloat(document.getElementById("privateKeyInput").value);
+
+            // Get the user-input global affine point
+            const globalAffinePointInput = document.getElementById("globalAffinePoint").value.split(',').map(val => parseFloat(val.trim()));
+
+            // Calculate the public key as privateKey * Global Affine Point
+            const publicKey = pointMultiplication(privateKey, { x: globalAffinePointInput[0], y: globalAffinePointInput[1] }, a, prime);
+
+            // Display the public key in the HTML element with id 'publicKeyOutput'
+            const publicKeyOutput = document.getElementById("publicKeyOutput");
+            publicKeyOutput.textContent = `Public Key: (${publicKey.x}, ${publicKey.y})`;
+        }
+        function encrypt() {
+        // Get the random integer 'k' from the user
+            const k = parseFloat(document.getElementById("randomInteger").value);
+
+            // Get the global affine point from the input field
+            const globalAffinePointInput = document.getElementById("globalAffinePoint").value.split(',').map(val => parseFloat(val.trim()));
+
+            // Calculate c1 = k * G
+            const c1 = pointMultiplication(k, { x: globalAffinePointInput[0], y: globalAffinePointInput[1] }, parseFloat(document.getElementById("a").value), parseFloat(document.getElementById("prime").value));
+
+            // Get the user-input plaintext point
+            const plaintextPointInput = document.getElementById("plaintextPoint").value.split(',').map(val => parseFloat(val.trim()));
+
+            // Get the public key from the displayed public key element
+            const publicKey = document.getElementById("publicKeyOutput").textContent.match(/\(([^)]+)\)/)[1].split(',').map(val => parseFloat(val.trim()));
+
+            // Calculate c2 = Pm + k * Pa
+            const c2 = pointAddition({ x: plaintextPointInput[0], y: plaintextPointInput[1] }, pointMultiplication(k, { x: publicKey[0], y: publicKey[1] }, parseFloat(document.getElementById("a").value), parseFloat(document.getElementById("prime").value)), parseFloat(document.getElementById("a").value), parseFloat(document.getElementById("prime").value));
+
+            // Display c1 and c2 in the HTML elements with id 'c1Result' and 'c2Result'
+            const c1Result = document.getElementById("c1Result");
+            const c2Result = document.getElementById("c2Result");
+            c1Result.textContent = `c1: (${c1.x}, ${c1.y})`;
+            c2Result.textContent = `c2: (${c2.x}, ${c2.y})`;
+        }
+        </script>
+    </center>
+</body>
+</html>

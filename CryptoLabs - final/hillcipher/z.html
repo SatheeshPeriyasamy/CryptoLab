@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./k.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="#" class="logo">Crypto<span>Labs!</span></a>
+            <h1>Known Plain Text Cipher Text Attack</h1>
+            <a href="C:\xampp\htdocs\cryptolab\CryptoLabs frontend\hillcipher\hill.html" class="back-button">Back</a>
+        </div>
+    </header>
+    <div class="input">
+        <label>Enter the known plain text</label>
+        <textarea name="" id="pt" cols="30" rows="3" placeholder="Enter the plaintext"></textarea>
+        <label>Enter the known cipher text</label>
+        <textarea name="" id="ct" cols="30" rows="3" placeholder="Enter the plaintext"></textarea>
+        <label>Enter the Key Size</label>
+        <input type="number" id="size" placeholder="Enter the keysize">
+        <button onclick="knownPTCT()">
+            Find Key
+        </button>
+    </div>
+    <div class="output">
+        <label for="">The decryption Key is</label>
+        <textarea name="" id="deckey" cols="30" rows="3"></textarea>
+    </div>
+</body>
+<script src="./c.js"></script>`
+</html>

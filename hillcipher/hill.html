@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+        body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+  }
+  header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 200;
+    background-color: #D2B48C;
+    box-shadow: 0 1px 4px hsl(0 4% 14% /10%);
+  }
+  .container {
+    max-width: 1068px;
+    margin: auto;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .logo{
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #FFF; /* White color for Crypto */
+            text-decoration: none;
+            padding: 10px;
+            margin-left: -400px;
+        }
+  h1{
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1a1e21;
+    margin: 0;
+  }
+  .back-button {
+    padding: 8px 14px;
+    text-transform: uppercase;
+    font-weight: 500;
+    border-radius: 4px;
+    background-color: #555555;
+    color: #fff;
+    text-decoration: none;
+    transition: background-color 0.3s;
+    margin-right: -400px; 
+  }
+  .back-button:hover {
+    background: hsl(24, 98%, 58%);
+  }
+  main {
+    padding: 20px;
+    font-size: 1rem;
+    line-height: 1.5;
+    margin-top: 90px; /* Adjust margin to account for the fixed header */
+  }
+  .div1
+    {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border: 2px solid gray;
+        padding: 15px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        
+    }
+    div select{
+        outline: none;
+        border: none;
+        color: white;
+        background-color: #D2B48C;
+        height: 40px;
+        width: 100%;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+    }
+    .logo span {
+        color: #555555; /* Color for Labs! */
+        margin-right: -100px;
+    }
+</style>
+<body>
+    <header>
+        <div class="container">
+            <a href="#" class="logo">Crypto<span>Labs!</span></a>
+            <h1>Hill Cipher</h1>
+            <a href="C:\xampp\htdocs\cryptolab\CryptoLabs frontend\index.html" class="back-button">Back</a>
+        </div>
+    </header>
+    <div class="div1">
+        <select name="option" id="s">
+            <option value="Hill Cipher">Encryption and Decryption</option>
+            <option value="Known Plain text">Known PT-CT Attack</option>
+        </select><br><br>
+        <center>
+        <button onclick="goto()">
+            Let's Go
+        </button>
+        </center>
+    </div>
+</body>
+<script src="./c.js"></script>
+</html>

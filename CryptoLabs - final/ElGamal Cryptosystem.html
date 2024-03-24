@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+            body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+  }
+  header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 200;
+    background-color: #D2B48C;
+    box-shadow: 0 1px 4px hsl(0 4% 14% /10%);
+  }
+  .container1 {
+    max-width: 1068px;
+    margin: auto;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .logo {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #FFF; /* White color for Crypto */
+            text-decoration: none;
+            padding: 10px;
+            margin-left: -400px;
+        }
+  h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1a1e21;
+    margin: 0;
+  }
+  .back-button {
+    padding: 8px 14px;
+    text-transform: uppercase;
+    font-weight: 500;
+    border-radius: 4px;
+    background-color: #555555;
+    color: #fff;
+    text-decoration: none;
+    transition: background-color 0.3s;
+    margin-right: -400px; 
+  }
+  .back-button:hover {
+    background: hsl(24, 98%, 58%);
+  }
+  main {
+    padding: 20px;
+    font-size: 1rem;
+    line-height: 1.5;
+    margin-top: 90px; /* Adjust margin to account for the fixed header */
+  }
+        .container{
+            max-width: 800px;
+            margin: 50px auto;
+            background-color: #D2B48C;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 100px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #555555;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: black;
+        }
+
+        p {
+            margin: 10px 0;
+            color: #333;
+        }
+
+        #calculationSteps {
+            white-space: pre-line;
+        }
+        .logo span {
+        color: #555555; /* Color for Labs! */
+        margin-right: -100px;
+    }
+    </style>
+
+    <title>ElGamal Cryptosystem</title>
+</head>
+<body>
+    <header>
+        <div class="container1">
+            <a href="#" class="logo">Crypto<span>Labs!</span></a>
+            <h1>ElGamal Cryptosystem</h1>
+            <a href="index.html" class="back-button">Back</a>
+        </div>
+    </header>
+    <div class="container">
+        <div id="keyGeneration">
+            <h2>Key Generation</h2>
+            <label for="primeNumber">Enter a large prime number (p):</label>
+            <input type="text" id="primeNumber">
+
+            <button onclick="findGenerator()">Find Generator</button>
+            <p id="generatorResult"></p>
+
+            <label for="generator">Enter a generator for the multiplicative group modulo p (g):</label>
+            <input type="text" id="generator">
+
+            <label for="privateKey">Enter a private key (x) such that 1 < x < p-1:</label>
+            <input type="text" id="privateKey">
+
+            <button onclick="generateKey()">Generate Keys</button>
+            <p id="calculationSteps"></p>
+            <p id="publicKey"></p>
+            <p id="privateKeyDisplay"></p>
+        </div>
+        <div id="encryption">
+            <h2>Encryption</h2>
+            <label for="plaintext">Enter the plaintext message (m) such that 1 < x < p-1:</label>
+            <input type="text" id="plaintext">
+
+            <label for="randomNumber">Enter a random number (y) such that 1 < y < p-1:</label>
+            <input type="text" id="randomNumber">
+
+            <button onclick="encrypt()">Encrypt</button>
+            <p id="ciphertext"></p>
+        </div>
+        <div id="decryption">
+            <h2>Decryption</h2>
+            <button onclick="decrypt()">Decrypt</button>
+            <p id="decryptedText"></p>
+        </div>
+    </div>
+
+    <script>
+        let p, g, h, x, y, m, c1, c2;
+
+        function encrypt() {
+            m = BigInt(document.getElementById('plaintext').value);
+            y = BigInt(document.getElementById('randomNumber').value);
+
+            const s = modPow(h, y, p);
+            c1 = modPow(g, y, p);
+            c2 = (m * s) % p;
+
+            document.getElementById('ciphertext').innerText = `Ciphertext: (${c1}, ${c2})`;
+        }
+
+        function decrypt() {
+            const s = modPow(c1, x, p);
+            const sInverse = modInverse(s, p);
+            const decryptedMessage = (c2 * sInverse) % p;
+            document.getElementById('decryptedText').innerText = `Decrypted Message: ${decryptedMessage}`;
+        }
+
+        function updateKeyDisplay() {
+            const calculationSteps = `
+            Compute h:
+            h = g^x mod p
+            h = ${g}^${x} mod ${p} = ${h} `;
+
+            document.getElementById('calculationSteps').innerText = calculationSteps;
+            document.getElementById('publicKey').innerText = `Public Key (p, g, h): (${p}, ${g}, ${h})`;
+            document.getElementById('privateKeyDisplay').innerText = `Private Key (x): ${x}`;
+        }
+
+        function modPow(base, exponent, modulus) {
+            if (modulus === 1n) return 0n;
+            let result = 1n;
+            base = base % modulus;
+            while (exponent > 0) {
+                if (exponent % 2n === 1n) {
+                    result = (result * base) % modulus;
+                }
+                exponent = exponent >> 1n;
+                base = (base * base) % modulus;
+            }
+            return result;
+        }
+
+        function modInverse(a, m) {
+            const m0 = m;
+            let x0 = 0n, x1 = 1n;
+            while (a > 1n) {
+                const q = a / m;
+                let t = m;
+                m = a % m, a = t;
+                t = x0;
+                x0 = x1 - q * x0;
+                x1 = t;
+            }
+            return x1 < 0n ? x1 + m0 : x1;
+        }
+
+        function generateKey() {
+            p = BigInt(document.getElementById('primeNumber').value);
+            g = BigInt(document.getElementById('generator').value);
+            x = BigInt(document.getElementById('privateKey').value);
+
+            h = modPow(g, x, p);
+            updateKeyDisplay();
+        }
+
+        function findGenerator() {
+            const pGenerator = BigInt(document.getElementById('primeNumber').value);
+            const generator = findPrimitiveRoot(pGenerator);
+
+            if (generator !== null) {
+                document.getElementById('generatorResult').innerText = `A generator for ${pGenerator} is: ${generator}`;
+                document.getElementById('generator').value = generator;
+            } else {
+                document.getElementById('generatorResult').innerText = `No generator found for ${pGenerator}`;
+            }
+        }
+
+        function findPrimitiveRoot(p) {
+            for (let g = 3n; g < p; g++) {
+                if (isPrimitiveRoot(g, p)) {
+                    return g;
+                }
+            }
+            return null;
+        }
+
+        function isPrimitiveRoot(g, p) {
+            const totient = p - 1n;
+            const factors = factorize(totient);
+
+            for (const factor of factors) {
+                if (modPow(g, totient / factor, p) === 1n) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        function factorize(n) {
+            const factors = [];
+            let currentFactor = 2n;
+
+            while (n > 1n) {
+                if (n % currentFactor === 0n) {
+                    factors.push(currentFactor);
+                    n /= currentFactor;
+                } else {
+                    currentFactor++;
+                }
+            }
+
+            return factors;
+        }
+    </script>
+</body>
+</html>
